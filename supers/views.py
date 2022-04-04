@@ -18,9 +18,14 @@ def all_supers(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view(['GET'])
+@api_view(['GET','PUT'])
 def single_super(request, pk):
-    query_set = get_object_or_404(Super, pk=pk),
+    query_set = get_object_or_404(Super, pk=pk)
     if request.method == 'GET':
         serializer = SuperSerializer(query_set)
         return Response(serializer.data, status = status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        serializer = SuperSerializer(query_set, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
