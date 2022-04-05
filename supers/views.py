@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import SuperSerializer
 from .models import Super
-from super_types.models import SuperType
 
 @api_view(['GET', 'POST'])
 def all_supers(request):
