@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import SuperSerializer
-from .models import Super
+from .models import Power, Super
 
 @api_view(['GET', 'POST'])
 def all_supers(request):
@@ -31,7 +31,7 @@ def all_supers(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view(['GET','PUT','DELETE'])
+@api_view(['GET','PUT','PATCH', 'DELETE'])
 def single_super(request, pk):
     query_set = get_object_or_404(Super, pk=pk)
     if request.method == 'GET':
@@ -42,6 +42,14 @@ def single_super(request, pk):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PATCH':
+        param = request.query_params.get('powers')
+        super_query = Super.objects.get(pk=pk)
+        power_query = Power.objects.get(pk=param)
+        super_query.powers.add(power_query)
+        return Response( status=status.HTTP_200_OK)
+
+        
     elif request.method == "DELETE":
         query_set.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

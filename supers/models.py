@@ -5,13 +5,10 @@ from super_types.models import SuperType
 class Power(models.Model):
     name = models.CharField(max_length=255)
 
-
-
 class Super(models.Model):
     name = models.CharField(max_length=255)
     alter_ego = models.CharField(max_length=255)
-    primary_ability = models.ManyToManyField(Power)
-    secondary_ability = models.ManyToManyField(Power, related_name='Secondary_ability')
+    powers = models.ManyToManyField(Power)
     catchphrase = models.CharField(max_length=255)
     super_type = models.ForeignKey(SuperType, on_delete=models.CASCADE)
 
