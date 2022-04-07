@@ -1,3 +1,4 @@
+from ast import Return
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -9,11 +10,33 @@ from .models import Power, Super
 def all_supers(request):
     if request.method == 'GET':
         param = request.query_params.get('type')
+        hero_param = request.query_params.get('hero')
+        villain_param = request.query_params.get('villain')
         custom_response_dictionary = {}
+        
         if param:
             query=Super.objects.filter(super_type__type=param)
             serializer=SuperSerializer(query,many=True)
             return Response(serializer.data,status=status.HTTP_200_OK)
+        elif hero_param:
+            hero_query=Super.objects.get(pk=hero_param)
+            villain_query=Super.objects.get(pk=villain_param)
+            if hero_query.powers.count() > villain_query.powers.count():
+                serializer=SuperSerializer(hero_query)
+                custom_response_dictionary= {
+                    "Winer": serializer.data
+                }
+                return Response(custom_response_dictionary, status=status.HTTP_200_OK)
+            elif villain_query.powers.count() > hero_query.powers.count():
+                serializer=SuperSerializer(villain_query)
+                custom_response_dictionary={
+                    "Winner": serializer.data
+                    
+                }
+                return Response(custom_response_dictionary, status=status.HTTP_200_OK)
+            else:
+
+                return Response('No winner', status=status.HTTP_200_OK)
         else:
 
             hero_query=Super.objects.filter(super_type__type='hero')
